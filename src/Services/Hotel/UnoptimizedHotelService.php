@@ -134,6 +134,79 @@ class UnoptimizedHotelService extends AbstractHotelService {
         $timer = Timers::getInstance();
         $timerId = $timer->startTimer('TimerGetCheapestRoom');
         // On charge toutes les chambres de l'hôtel
+
+        $sqlQuery = "SELECT post.ID, 
+        PriceData.meta_value AS price, 
+        SurfaceData.meta_value AS surface, 
+        TypeData.meta_value AS type, 
+        BedroomsCountData.meta_value AS bedrooms, 
+        BathroomsCountData.meta_value AS bathrooms";
+
+        $sqlQuery .= " INNER JOIN wp_postmeta AS PriceData ON post.ID = PriceData.post_id AND PriceData.meta_key = 'price'"
+            . " INNER JOIN wp_postmeta AS SurfaceData ON post.ID = SurfaceData.post_id AND SurfaceData.meta_key = 'surface'"
+            . " INNER JOIN wp_postmeta AS TypeData ON post.ID = TypeData.post_id AND TypeData.meta_key = 'type'"
+            . " INNER JOIN wp_postmeta AS BedroomsCountData ON post.ID = BedroomsCountData.post_id AND BedroomsCountData.meta_key = 'bedrooms_count'"
+            . " INNER JOIN wp_postmeta AS BathroomsCountData ON post.ID = BathroomsCountData.post_id AND BathroomsCountData.meta_key = 'bathrooms_count'";
+
+        $whereClauses = [];
+
+        if (isset ($args['surface']['min'])){
+            $whereClauses[] = "SurfaceData.meta_value >= :surfaceMin";
+        }
+
+        if (isset ($args['surface']['max'])){
+            $whereClauses[] =  "SurfaceData.meta_value <= :surfaceMax";
+        }
+
+        if (isset ($args['price']['min'])){
+            $whereClauses[] = "PriceData.meta_value >= :priceMin";
+        }
+
+        if (isset ($args['price']['max'])){
+            $whereClauses[] =  "PriceData.meta_value <= :priceMax";
+        }
+
+        if (isset ($args['rooms'])){
+            $whereClauses[] =  "BedroomsCountData.meta_value = :rooms";
+        }
+
+        if (isset ($args['bathRooms'])){
+            $whereClauses[] =  "BathroomsCountData.meta_value = :bathRooms";
+        }
+
+        if (isset ($args['types'])){
+            $whereClauses[] =  "TypeData.meta_value IN ( :types )";
+        }
+
+        if ( count($whereClauses > 0) ) {
+            $sqlQuery .= " WHERE " . implode(' AND ', $whereClauses);
+        }
+
+        $stmt = $this->getDB()->prepare( $sqlQuery );
+
+        if ( isset( $args['surface']['min'] ) ) {
+            $stmt->bindParam('surfaceMin', $args['surface']['min'], PDO::PARAM_INT);
+        }
+
+        if ( isset( $args['surface']['max'] ) ) {
+            $stmt->bindParam('surfaceMax', $args['surface']['max'], PDO::PARAM_INT);
+        }
+
+        if ( isset( $args['price']['min'] ) ) {
+            $stmt->bindParam('priceMin', $args['price']['min'], PDO::PARAM_INT);
+        }
+
+        if ( isset( $args['price']['max'] ) ) {
+            $stmt->bindParam('priceMax', $args['price']['max'], PDO::PARAM_INT);
+        }
+
+
+
+
+        $stmt->execute();
+
+
+
         $stmt = $this->getDB()->prepare( "SELECT * FROM wp_posts WHERE post_author = :hotelId AND post_type = 'room'" );
         $stmt->execute( [ 'hotelId' => $hotel->getId() ] );
 
