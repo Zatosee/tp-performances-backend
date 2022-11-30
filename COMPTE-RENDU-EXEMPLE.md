@@ -103,8 +103,8 @@ FROM wp_posts AS post
 
 |                              | **Avant** | **Après** |
 |------------------------------|-----------|-----------|
-| Nombre d'appels de `getDB()` | 1800      | NOMBRE    |
- | Temps de `getMeta`           | 1.54      | TEMPS     |
+| Nombre d'appels de `getDB()` | 1800      | 200       |
+ | Temps de `getMeta`           | 1.54s     | 201.56ms  |
 
 ## Question 6 : Création d'un service basé sur une seule requête SQL
 
