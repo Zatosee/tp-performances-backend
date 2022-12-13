@@ -34,7 +34,7 @@ Vous pouvez utiliser ce [GSheets](https://docs.google.com/spreadsheets/d/13Hw27U
 
 #### Amélioration de la méthode `getMeta` et donc de la méthode `METHOD` :
 
-- **Avant** TEMPS
+- **Avant** 4.54
 
 ```sql
 
@@ -50,7 +50,7 @@ SELECT meta_value FROM wp_usermeta WHERE user_id = :userid AND meta_key = :key
 
 #### Amélioration de la méthode `getReviews` :
 
-- **Avant** TEMPS
+- **Avant** 8.96s
 
 ```sql
 
@@ -66,7 +66,7 @@ SELECT ROUND(AVG(meta_value)) AS rating, COUNT(meta_value) AS count FROM wp_post
 
 #### Amélioration de la méthode `getCheapeastRoom` :
 
-- **Avant** TEMPS
+- **Avant** 16.73s
 
 ```sql
 
@@ -110,8 +110,8 @@ FROM wp_posts AS post
 
 |                              | **Avant** | **Après** |
 |------------------------------|-----------|-----------|
-| Nombre d'appels de `getDB()` | NOMBRE    | NOMBRE    |
-| Temps de chargement global   | TEMPS     | TEMPS     |
+| Nombre d'appels de `getDB()` | 601       | NOMBRE    |
+| Temps de chargement global   | 17.54     | TEMPS     |
 
 **Requête SQL**
 
